@@ -15,6 +15,7 @@ library
   hs-source-dirs:     src
   exposed-modules:    Chorus.Api
                     , Chorus.Assets
+                    , Chorus.Assets.Types
   ghc-options:       -Wall
                      -fno-warn-type-defaults
                      -fno-warn-orphans
