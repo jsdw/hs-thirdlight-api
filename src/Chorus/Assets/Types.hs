@@ -31,7 +31,7 @@ module Chorus.Assets.Types (
 ) where
 
 import qualified Data.Aeson             as Json
-import           Data.Aeson             ((.:),parseJSON)
+import           Data.Aeson             ((.:),(.=),parseJSON)
 import qualified Data.Text              as Text
 import           Data.Text              (Text)
 import           Control.Applicative    (empty,(<|>))
@@ -66,6 +66,13 @@ instance Json.FromJSON AssetUID where
         fromTypeIdHash = AssetID <$> o .: "type" <*> o .: "id"
     parseJSON _ = empty
 
+instance Json.ToJSON AssetUID where
+    toJSON (AssetID ty i) = Json.object ["type" .= ty, "id" .= i]
+    toJSON UsersID  = Json.object ["type" .= ("users" :: Text)]
+    toJSON GroupsID = Json.object ["type" .= ("groups" :: Text)]
+    toJSON TopID    = Json.object ["type" .= ("top" :: Text)]
+
+
 data AssetType = IsFile
                | IsFolder
                | IsLink
@@ -81,6 +88,12 @@ instance Json.FromJSON AssetType where
         "folderlink" -> return IsFolderLink
         _            -> empty
     parseJSON _ = empty
+
+instance Json.ToJSON AssetType where
+    toJSON IsFile       = Json.String "file"
+    toJSON IsFolder     = Json.String "folder"
+    toJSON IsLink       = Json.String "link"
+    toJSON IsFolderLink = Json.String "folderlink"
 
 --
 -- Regular files
