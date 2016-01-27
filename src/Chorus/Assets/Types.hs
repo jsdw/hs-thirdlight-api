@@ -103,6 +103,7 @@ data File = File
     , fileParentId   :: ID
     , fileId         :: ID
     , fileParentType :: FolderType
+    , filePreviewUrl :: Text
     } deriving (Eq, Show)
 
 instance Json.FromJSON File where
@@ -111,6 +112,7 @@ instance Json.FromJSON File where
              <*> o .: "parentId"
              <*> o .: "id"
              <*> o .: "parentType"
+             <*> o .: "previewUrl"
     parseJSON _ = empty
 
 instance AssetLike File where

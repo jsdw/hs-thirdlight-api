@@ -5,9 +5,14 @@ module Chorus.Api (
     withChorusSession,
     withChorusSession',
 
-    -- our "test" HasApi instance:
+    -- our basic HasApi instance:
     runApi,
     runApi',
+
+    -- our basic error context:
+    ApiError,
+    apiE,
+    runApiE,
 
     Session,
     getSessionKey,
@@ -44,10 +49,25 @@ import qualified Data.Map.Strict          as Map
 import           Data.Map.Strict          (Map)
 import qualified Data.Set                 as Set
 import           Data.Set                 (Set)
+import           Control.Monad.Except
 
 type JSON = Json.Value
 type URL = Text
 type CacheKey = (Text,ByteString)
+
+--
+-- We can wrap API calls in this basic error context to
+-- avoid having to check for errors every step:
+--
+type ApiError m a = ExceptT Err m a
+
+apiE :: (Json.FromJSON res, HasApi m) => Text -> JSON -> ApiError m res
+apiE txt json = lift (makeApiCall txt json) >>= \e -> case e of
+    Left err  -> throwError err
+    Right res -> return res
+
+runApiE :: HasApi m => ApiError m a -> m (Either Err a)
+runApiE = runExceptT
 
 --
 -- Things can become a member of this class to say

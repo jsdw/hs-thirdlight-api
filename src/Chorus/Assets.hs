@@ -19,36 +19,13 @@ import qualified Data.Text     as Text
 import           Data.Text     (Text)
 import qualified Data.Aeson    as Json
 import           Data.Aeson    ((.=))
-import qualified Chorus.Api    as Chorus
-import           Chorus.Api    (HasApi)
+import           Chorus.Api    (HasApi, runApiE, apiE, ApiError)
 import qualified Data.Map      as Map
 import           Data.Map      (Map)
 import           Data.Monoid   ((<>))
 import           Data.Foldable (foldl')
-import           Control.Monad.Except
 
 import Chorus.Assets.Types
-
-type JSON = Json.Value
-type ApiError m a = ExceptT Chorus.Err m a
-
--- this is the only external function we need; instances of
--- HasApi will decide how to actually make it work.
-api :: (Json.FromJSON res, HasApi m) => Text -> JSON -> m (Either Chorus.Err res)
-api = Chorus.makeApiCall
-
--- this one can be used in our ApiError context so that errors
--- are handled transparently
-apiE :: (Json.FromJSON res, HasApi m) => Text -> JSON -> ApiError m res
-apiE txt json = lift (api txt json) >>= wrapEither
-
-wrapEither :: HasApi m => Either Chorus.Err a -> ApiError m a
-wrapEither e = case e of
-    Left err  -> throwError err
-    Right res -> return res
-
-runApiE :: HasApi m => ApiError m a -> m (Either Chorus.Err a)
-runApiE = runExceptT
 
 --
 -- Expose a nicer API by unwrapping from the error context:
