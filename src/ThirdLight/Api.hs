@@ -1,9 +1,9 @@
 module ThirdLight.Api (
     HasApi(..),
-    api,
-    api',
-    withChorusSession,
-    withChorusSession',
+    request,
+    request',
+    withSession,
+    withSession',
 
     -- our basic HasApi instance:
     runApi,
@@ -81,7 +81,7 @@ class Monad m => HasApi m where
 type ApiReader a = ReaderT Session IO a
 
 runApi' :: URL -> ApiReader a -> IO a
-runApi' url r = withChorusSession url "" (\s -> runApi s r)
+runApi' url r = withSession url "" (\s -> runApi s r)
 
 runApi :: Session -> ApiReader a -> IO a
 runApi = flip Reader.runReaderT
@@ -89,7 +89,7 @@ runApi = flip Reader.runReaderT
 instance HasApi (ReaderT Session IO) where
     makeApiCall txt json = do
         sess <- Reader.ask
-        liftIO $ api sess txt json
+        liftIO $ request sess txt json
 
 -- Wrap the session data in an mvar so it can be shared
 -- around and will stay uptodate.
@@ -137,27 +137,27 @@ noData = Json.object []
 --
 -- create a chorus session and provide it to an inner func:
 --
-withChorusSession :: MonadIO m => URL -> Text -> (Session -> IO a) -> m a
-withChorusSession url sessionKey fn = liftIO $ do
+withSession :: MonadIO m => URL -> Text -> (Session -> IO a) -> m a
+withSession url sessionKey fn = liftIO $ do
     Sess.withAPISession $ \sess -> newMVar (ChorusSession sess url sessionKey Map.empty) >>= fn
 
-withChorusSession' :: MonadIO m => (Session -> IO a) -> m a
-withChorusSession' fn = withChorusSession "" "" fn
+withSession' :: MonadIO m => (Session -> IO a) -> m a
+withSession' fn = withSession "" "" fn
 
 --
 -- creates a session to some URL and then runs the request;
 -- this is handy for quick debugging, but afaik the wreq session
 -- is cleaned up each time and not reused.
 --
-api' :: (FromJSON res, MonadIO m) => URL -> Text -> JSON -> m (ChorusResult res)
-api' url action reqData = liftIO $ withChorusSession url "" (\sess -> api sess action reqData)
+request' :: (FromJSON res, MonadIO m) => URL -> Text -> JSON -> m (ChorusResult res)
+request' url action reqData = liftIO $ withSession url "" (\sess -> request sess action reqData)
 
 --
 -- A low level API interface which just does basic error handling
 -- and session updating.
 --
-api :: (FromJSON res, MonadIO m) => Session -> Text -> JSON -> m (ChorusResult res)
-api svar action reqData = liftIO $ flip catches handleErrs $ do
+request :: (FromJSON res, MonadIO m) => Session -> Text -> JSON -> m (ChorusResult res)
+request svar action reqData = liftIO $ flip catches handleErrs $ do
 
     s <- readMVar svar
     r <- case getFromCache s action reqData of
