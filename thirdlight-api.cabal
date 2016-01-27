@@ -1,21 +1,19 @@
-name:                chorus-api
+name:                thirdlight-api
 version:             0.0.0.1
-homepage:            http://github.com/jsdw/chorus-api
+homepage:            https://github.com/jsdw/hs-thirdlight-api
 license:             BSD3
 license-file:        LICENSE
 author:              James Wilson
 maintainer:          me@unbui.lt
-copyright:           2010 Author Here
 category:            Web
 build-type:          Simple
--- extra-source-files:
 cabal-version:       >=1.10
 
 library
   hs-source-dirs:     src
-  exposed-modules:    Chorus.Api
-                    , Chorus.Assets
-                    , Chorus.Assets.Types
+  exposed-modules:    ThirdLight.Api
+                    , ThirdLight.Assets
+                    , ThirdLight.Assets.Types
   ghc-options:       -Wall
                      -fno-warn-type-defaults
                      -fno-warn-orphans
@@ -60,4 +58,4 @@ test-suite chorus-api-test
 
 source-repository head
   type:     git
-  location: https://github.com/jsdw/chorus-api
+  location: https://github.com/jsdw/hs-thirdlight-api

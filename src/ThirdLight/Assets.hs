@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -fno-warn-missing-signatures #-}
 {-# LANGUAGE FlexibleContexts #-}
 
-module Chorus.Assets (
+module ThirdLight.Assets (
 
     -- get details of assets given some listof AssetUIDs:
     details,
@@ -11,7 +11,7 @@ module Chorus.Assets (
     childIds,
 
     -- re-expose asset types:
-    module Chorus.Assets.Types
+    module ThirdLight.Assets.Types
 
 ) where
 
@@ -19,13 +19,13 @@ import qualified Data.Text     as Text
 import           Data.Text     (Text)
 import qualified Data.Aeson    as Json
 import           Data.Aeson    ((.=))
-import           Chorus.Api    (HasApi, runApiE, apiE, ApiError)
+import           ThirdLight.Api    (HasApi, runApiE, apiE, ApiError)
 import qualified Data.Map      as Map
 import           Data.Map      (Map)
 import           Data.Monoid   ((<>))
 import           Data.Foldable (foldl')
 
-import Chorus.Assets.Types
+import ThirdLight.Assets.Types
 
 --
 -- Expose a nicer API by unwrapping from the error context:

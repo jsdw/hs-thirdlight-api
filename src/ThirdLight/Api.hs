@@ -1,4 +1,4 @@
-module Chorus.Api (
+module ThirdLight.Api (
     HasApi(..),
     api,
     api',
@@ -34,7 +34,6 @@ import qualified Data.Text                as Text
 import           Control.Concurrent       (MVar,newMVar,readMVar,modifyMVar_)
 import           Data.ByteString.Lazy     (ByteString)
 import           Data.Text                (Text)
-import           Control.Monad.IO.Class   (MonadIO,liftIO)
 import           Data.Monoid              ((<>))
 import           Control.Applicative      ((<|>))
 import           Control.Lens             hiding ((.=))

@@ -3,7 +3,7 @@
 -- This module gives certain backend objects types on the front so that they
 -- are easier to work with, eg Files, Folders etc
 --
-module Chorus.Assets.Types (
+module ThirdLight.Assets.Types (
     ID(..),
     -- unique ID for each unique "asset"
     AssetUID(..),
